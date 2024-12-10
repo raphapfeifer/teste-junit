@@ -27,7 +27,7 @@ class ValidacaoTutorComAdocaoEmAndamentoTest {
     @Test
     void deveRetornarTutorComAdocaoEmAndamento(){
 
-        given(adocaoRepository.existsByPetIdAndStatus(dto.idTutor(),StatusAdocao.AGUARDANDO_AVALIACAO)).willReturn(true);
+        given(adocaoRepository.existsByTutorIdAndStatus(dto.idTutor(),StatusAdocao.AGUARDANDO_AVALIACAO)).willReturn(true);
 
 
         assertThrows(ValidacaoException.class, () -> validacaoTutorComAdocaoEmAndamento.validar(dto));
@@ -36,7 +36,7 @@ class ValidacaoTutorComAdocaoEmAndamentoTest {
     @Test
     void devePermitirTutorSemAdocaoEmAndamento(){
 
-        given(adocaoRepository.existsByPetIdAndStatus(dto.idTutor(),StatusAdocao.AGUARDANDO_AVALIACAO)).willReturn(false);
+        given(adocaoRepository.existsByTutorIdAndStatus(dto.idTutor(),StatusAdocao.AGUARDANDO_AVALIACAO)).willReturn(false);
 
 
         assertDoesNotThrow(() -> validacaoTutorComAdocaoEmAndamento.validar(dto));
