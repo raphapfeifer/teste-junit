@@ -7,12 +7,13 @@ import br.com.alura.adopet.api.service.AdocaoService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/adocoes")
+@RequestMapping(value = "/adocoes")
 public class AdocaoController {
 
     @Autowired
