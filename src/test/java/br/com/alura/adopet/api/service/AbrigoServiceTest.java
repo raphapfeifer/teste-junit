@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -23,6 +25,9 @@ class AbrigoServiceTest {
 
     @InjectMocks
     private AbrigoService service;
+
+    @Mock
+    Optional<Abrigo> optional;
 
     @Mock
     private AbrigoRepository abrigoRepository;
@@ -56,5 +61,28 @@ class AbrigoServiceTest {
 
         assertThrows(ValidacaoException.class, () -> service.cadatrar(dto));
     }
+
+    @Test
+    void deveCarregarAbrigoComId(){
+        given(abrigoRepository.findById(1l)).willReturn(optional);
+
+        assertDoesNotThrow(() -> service.carregarAbrigo("1"));
+    }
+
+    @Test
+    void deveNaoCarregarAbrigoComId(){
+        Optional<Abrigo> optionalVazio = Optional.empty();
+        given(abrigoRepository.findById(1l)).willReturn(optionalVazio);
+
+        assertThrows(ValidacaoException.class,() -> service.carregarAbrigo("1"));
+    }
+
+    @Test
+    void deveCarregarAbrigoComNome(){
+        given(abrigoRepository.findByNome("Abrigo novo")).willReturn(optional);
+
+        assertDoesNotThrow(() -> service.carregarAbrigo("Abrigo novo"));
+    }
+
 
 }
