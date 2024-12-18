@@ -27,7 +27,7 @@ class AbrigoServiceTest {
     private AbrigoService service;
 
     @Mock
-    Optional<Abrigo> optional;
+    private Abrigo abrigo;
 
     @Mock
     private AbrigoRepository abrigoRepository;
@@ -64,7 +64,7 @@ class AbrigoServiceTest {
 
     @Test
     void deveCarregarAbrigoComId(){
-        given(abrigoRepository.findById(1l)).willReturn(optional);
+        given(abrigoRepository.findById(1l)).willReturn(Optional.of(abrigo));
 
         assertDoesNotThrow(() -> service.carregarAbrigo("1"));
     }
@@ -79,10 +79,26 @@ class AbrigoServiceTest {
 
     @Test
     void deveCarregarAbrigoComNome(){
-        given(abrigoRepository.findByNome("Abrigo novo")).willReturn(optional);
+        given(abrigoRepository.findByNome("Abrigo novo")).willReturn(Optional.of(abrigo));
 
         assertDoesNotThrow(() -> service.carregarAbrigo("Abrigo novo"));
     }
 
+    @Test
+    void deveChamarListaDeTodosOsAbrigos(){
+        service.listar();
+
+        then(abrigoRepository).should().findAll();
+    }
+
+    @Test
+    void deveChamarListaDePetsDoAbrigoAtravesDoNome(){
+        String nome = "Miau";
+        given(abrigoRepository.findByNome(nome)).willReturn(Optional.of(abrigo));
+
+        service.listarPetsDoAbrigo(nome);
+
+        then(petRepository).should().findByAbrigo(abrigo);
+    }
 
 }
