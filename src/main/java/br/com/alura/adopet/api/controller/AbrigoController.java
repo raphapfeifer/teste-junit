@@ -64,5 +64,4 @@ public class AbrigoController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }

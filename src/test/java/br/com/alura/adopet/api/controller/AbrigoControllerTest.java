@@ -1,5 +1,7 @@
 package br.com.alura.adopet.api.controller;
 
+import br.com.alura.adopet.api.exception.ValidacaoException;
+import br.com.alura.adopet.api.model.Abrigo;
 import br.com.alura.adopet.api.service.AbrigoService;
 import br.com.alura.adopet.api.service.PetService;
 import org.junit.jupiter.api.Test;
@@ -7,11 +9,12 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @SpringBootTest
@@ -21,11 +24,14 @@ class AbrigoControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Mock
+    @MockBean
     private AbrigoService abrigoService;
 
-    @Mock
+    @MockBean
     private PetService petService;
+
+    @MockBean
+    private Abrigo abrigo;
 
     @Test
     void deveRetornarCodigo400ParaCadastroDeAbrigo() throws Exception {
@@ -62,7 +68,7 @@ class AbrigoControllerTest {
     }
 
     @Test
-    void deveRetornarListaDeAbrigos() throws Exception {
+    void deveRetornar200ListaDeAbrigos() throws Exception {
 
         var response = mvc.perform(
                     get("/abrigos")
@@ -70,6 +76,60 @@ class AbrigoControllerTest {
         ).andReturn().getResponse();
 
         assertEquals(200, response.getStatus());
-
     }
+
+    @Test
+    void deveRetornar200ListaDeAbrigosPorNome() throws Exception {
+
+        String nome = "Abrigo Feliz";
+
+        var response = mvc.perform(
+                get("/abrigos/{nome}/pets",nome)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(200,response.getStatus());
+    }
+
+    @Test
+    void deveRetornar200ListaDeAbrigosPorId() throws Exception {
+
+        String id = "1";
+
+        var response = mvc.perform(
+                get("/abrigos/{id}/pets",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(200,response.getStatus());
+    }
+
+    @Test
+    void deveRetornar400ListaDeAbrigosPorNomeInvalido() throws Exception {
+
+        String nome = "Miau";
+        given(abrigoService.listarPetsDoAbrigo(nome)).willThrow(ValidacaoException.class);
+
+        var response = mvc.perform(
+                get("/abrigos/{nome}/pets",nome)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(404,response.getStatus());
+    }
+
+    @Test
+    void deveRetornar400ListaDeAbrigosPorIdInvalido() throws Exception {
+
+        String id = "1";
+        given(abrigoService.listarPetsDoAbrigo(id)).willThrow(ValidacaoException.class);
+
+        var response = mvc.perform(
+                get("/abrigos/{id}/pets",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(404,response.getStatus());
+    }
+
 }
