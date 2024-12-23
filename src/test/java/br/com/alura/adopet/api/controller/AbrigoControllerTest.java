@@ -132,4 +132,112 @@ class AbrigoControllerTest {
         assertEquals(404,response.getStatus());
     }
 
+    @Test
+    void deveRetornar200CadastroDePetPeloId() throws Exception {
+
+        String json = """
+                {
+                    "tipo": "GATO",
+                    "nome": "Miau",
+                    "raca": "padrao",
+                    "idade": "5",
+                    "cor" : "Parda",
+                    "peso": "6.4"
+                }
+                """;
+
+        String abrigoId = "1";
+
+        var response = mvc.perform(
+                post("/abrigos/{abrigoId}/pets", abrigoId)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(200,response.getStatus());
+
+    }
+
+    @Test
+    void deveRetornar200CadastroDePetPeloNome() throws Exception {
+
+        String json = """
+                {
+                    "tipo": "GATO",
+                    "nome": "Miau",
+                    "raca": "padrao",
+                    "idade": "5",
+                    "cor" : "Parda",
+                    "peso": "6.4"
+                }
+                """;
+
+        String nome = "Abrigo Feliz";
+
+        var response = mvc.perform(
+                post("/abrigos/{nome}/pets", nome)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(200,response.getStatus());
+
+    }
+
+    @Test
+    void deveRetornar404CadastroDePetPeloIdInvalido() throws Exception {
+
+        String json = """
+                {
+                    "tipo": "GATO",
+                    "nome": "Miau",
+                    "raca": "padrao",
+                    "idade": "5",
+                    "cor" : "Parda",
+                    "peso": "6.4"
+                }
+                """;
+
+        String abrigoId = "1";
+
+        given(abrigoService.carregarAbrigo(abrigoId)).willThrow(ValidacaoException.class);
+
+        var response = mvc.perform(
+                post("/abrigos/{abrigoId}/pets", abrigoId)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(404,response.getStatus());
+
+    }
+
+    @Test
+    void deveRetornar404CadastroDePetPeloNomeInvalido() throws Exception {
+
+        String json = """
+                {
+                    "tipo": "GATO",
+                    "nome": "Miau",
+                    "raca": "padrao",
+                    "idade": "5",
+                    "cor" : "Parda",
+                    "peso": "6.4"
+                }
+                """;
+
+        String nome = "Abrigo Errado";
+
+        given(abrigoService.carregarAbrigo(nome)).willThrow(ValidacaoException.class);
+
+        var response = mvc.perform(
+                post("/abrigos/{nome}/pets", nome)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertEquals(404,response.getStatus());
+
+    }
+
 }
