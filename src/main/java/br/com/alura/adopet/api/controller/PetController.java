@@ -17,6 +17,7 @@ public class PetController {
     @Autowired
     private PetService service;
 
+
     @GetMapping
     public ResponseEntity<List<PetDto>> listarTodosDisponiveis() {
         List<PetDto> pets = service.buscarPetsDisponiveis();
